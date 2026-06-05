@@ -44,6 +44,16 @@ jobs:
           path: coverage/
           retention-days: 30
 
+      - name: Upload Vitest test report
+        # Vitest's html reporter writes ./html — an interactive pass/fail report.
+        # Upload even on test failure; that's exactly when it's most useful.
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-report
+          path: html/
+          retention-days: 30
+
       - name: Build
         run: npm run build
 
@@ -92,10 +102,10 @@ jobs:
         with:
           sarif_file: fallow-results.sarif
 
-  # Publish the Playwright and coverage HTML reports to GitHub Pages so they can
-  # be browsed at a URL. Runs only on pushes to main: pull_request runs (and
-  # forks) can't safely deploy to the single Pages site. Requires Pages to be
-  # enabled with "Source: GitHub Actions" in repo Settings → Pages.
+  # Publish the Playwright, Vitest test-results and coverage HTML reports to
+  # GitHub Pages so they can be browsed at a URL. Runs only on pushes to main:
+  # pull_request runs (and forks) can't safely deploy to the single Pages site.
+  # Requires Pages enabled with "Source: GitHub Actions" in repo Settings → Pages.
   publish-reports:
     if: github.event_name == 'push'
     needs: ci
@@ -120,6 +130,12 @@ jobs:
           name: coverage
           path: site/coverage
 
+      - name: Download Vitest test report
+        uses: actions/download-artifact@v4
+        with:
+          name: vitest-report
+          path: site/tests
+
       - name: Build landing page
         run: |
           cat > site/index.html <<'HTML'
@@ -138,6 +154,7 @@ jobs:
             <body>
               <h1>CI Reports</h1>
               <a href="./playwright/index.html">▶ Playwright E2E report</a>
+              <a href="./tests/index.html">✓ Unit test results (Vitest)</a>
               <a href="./coverage/blogapp-template/index.html">▣ Unit test coverage report</a>
             </body>
           </html>
