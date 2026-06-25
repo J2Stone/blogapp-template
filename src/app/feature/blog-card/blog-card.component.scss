@@ -7,3 +7,12 @@
   background-image: url('https://material.angular.dev/assets/img/examples/shiba1.jpg');
   background-size: cover;
 }
+
+mat-card-title a {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

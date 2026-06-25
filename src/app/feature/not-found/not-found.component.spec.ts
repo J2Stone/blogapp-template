@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { BlogOverviewComponent } from './blog-overview.component';
+import { NotFoundComponent } from './not-found.component';
 
-describe('BlogOverviewComponent', () => {
-  let component: BlogOverviewComponent;
-  let fixture: ComponentFixture<BlogOverviewComponent>;
+describe('NotFoundComponent', () => {
+  let component: NotFoundComponent;
+  let fixture: ComponentFixture<NotFoundComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BlogOverviewComponent],
+      imports: [NotFoundComponent],
       providers: [provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BlogOverviewComponent);
+    fixture = TestBed.createComponent(NotFoundComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

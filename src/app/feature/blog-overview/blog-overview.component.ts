@@ -1,16 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BlogCardComponent } from '../blog-card/blog-card.component';
 import { Blog } from '../../interfaces/blog';
-import blogData from '../../data/blogs.json';
+import { BlogService } from '../../shared/blog.service';
 
 @Component({
   selector: 'app-blog-overview',
   standalone: true,
   imports: [BlogCardComponent],
   templateUrl: './blog-overview.component.html',
+  styleUrl: './blog-overview.component.scss',
 })
 export class BlogOverviewComponent {
-  blogs: Blog[] = blogData as Blog[];
+  private blogService = inject(BlogService);
+  blogs: Blog[] = this.blogService.getAll();
 
   onLikeToggled(blogId: number): void {
     for (const blog of this.blogs) {

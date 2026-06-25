@@ -1,0 +1,16 @@
+@if (blog(); as currentBlog) {
+  <mat-card appearance="outlined">
+    @if (currentBlog.headerImageUrl) {
+      <img mat-card-image [src]="currentBlog.headerImageUrl" [alt]="currentBlog.title" />
+    }
+    <mat-card-header>
+      <mat-card-title>{{ currentBlog.title }}</mat-card-title>
+      <mat-card-subtitle>{{ currentBlog.author }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{ currentBlog.contentPreview }}</p>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  <p>Blog-Post nicht gefunden.</p>
+}
