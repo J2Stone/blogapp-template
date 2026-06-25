@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BlogCardComponent } from './blog-card.component';
+import { BlogDetailComponent } from './blog-detail.component';
 import { Blog } from '../../interfaces/blog';
-import { provideRouter } from '@angular/router';
 
 const mockBlog: Blog = {
   id: 1,
@@ -16,17 +15,16 @@ const mockBlog: Blog = {
   updatedAt: '2026-01-01T00:00:00',
 };
 
-describe('BlogCardComponent', () => {
-  let component: BlogCardComponent;
-  let fixture: ComponentFixture<BlogCardComponent>;
+describe('BlogDetailComponent', () => {
+  let component: BlogDetailComponent;
+  let fixture: ComponentFixture<BlogDetailComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BlogCardComponent],
-      providers: [provideRouter([])],
+      imports: [BlogDetailComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BlogCardComponent);
+    fixture = TestBed.createComponent(BlogDetailComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('blog', mockBlog);
     await fixture.whenStable();

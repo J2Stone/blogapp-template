@@ -1,5 +1,7 @@
-@for (blog of blogs; track blog.id) {
-  <app-blog-card [blog]="blog" (likeToggled)="onLikeToggled($event)" />
-} @empty {
-  <p>Keine Blog-Posts vorhanden.</p>
-}
+<div class="blog-grid">
+  @for (blog of blogs; track blog.id) {
+    <app-blog-card [blog]="blog" (likeToggled)="onLikeToggled($event)" />
+  } @empty {
+    <p>Keine Blog-Posts vorhanden.</p>
+  }
+</div>

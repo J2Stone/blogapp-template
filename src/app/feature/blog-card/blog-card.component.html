@@ -3,7 +3,9 @@
     <img mat-card-image [src]="blog().headerImageUrl" [alt]="blog().title" />
   }
   <mat-card-header>
-    <mat-card-title>{{ blog().title }}</mat-card-title>
+    <mat-card-title>
+      <a [routerLink]="['/blog', blog().id]">{{ blog().title }}</a>
+    </mat-card-title>
     <mat-card-subtitle>{{ blog().author }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
