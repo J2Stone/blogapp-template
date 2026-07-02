@@ -1,11 +1,7 @@
-.example-card {
-  max-width: 400px;
-  padding: 5%;
-}
+@use 'mixins' as *;
 
-.example-header-image {
-  background-image: url('https://material.angular.dev/assets/img/examples/shiba1.jpg');
-  background-size: cover;
+mat-card {
+  @include card-interactive;
 }
 
 mat-card-title a {
