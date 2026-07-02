@@ -2,6 +2,10 @@
   <span>{{ title }}</span>
   <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Blog</a>
   <a routerLink="/about" routerLinkActive="active">About</a>
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="toggleTheme()">
+    <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
 </mat-toolbar>
 
 <router-outlet />

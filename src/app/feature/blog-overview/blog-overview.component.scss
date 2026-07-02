@@ -1,8 +1,10 @@
+@use 'variables' as *;
+
 .blog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  padding: 1.5rem;
-  max-width: 1200px;
+  grid-template-columns: repeat(auto-fill, minmax($card-min, 1fr));
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+  max-width: $grid-max;
   margin: 0 auto;
 }
