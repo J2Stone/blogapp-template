@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlogCardComponent } from './blog-card.component';
-import { Blog } from '../../interfaces/blog';
+import { Blog } from '../../interfaces/blog.schema';
 import { provideRouter } from '@angular/router';
 
 const mockBlog: Blog = {

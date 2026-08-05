@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BlogDetailComponent } from './blog-detail.component';
-import { Blog } from '../../interfaces/blog';
+import { BlogDetail } from '../../interfaces/blog.schema';
 
-const mockBlog: Blog = {
+const mockBlog: BlogDetail = {
   id: 1,
   title: 'Test',
-  contentPreview: 'Preview',
+  content: 'Voller Inhalt',
   author: 'Autor',
   likes: 0,
-  comments: 0,
+  comments: [],
   likedByMe: false,
   createdByMe: false,
   createdAt: '2026-01-01T00:00:00',
