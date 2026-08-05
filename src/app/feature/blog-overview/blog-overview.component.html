@@ -1,7 +1,13 @@
-<div class="blog-grid">
-  @for (blog of blogs; track blog.id) {
-    <app-blog-card [blog]="blog" (likeToggled)="onLikeToggled($event)" />
-  } @empty {
-    <p>Keine Blog-Posts vorhanden.</p>
-  }
-</div>
+@if (loading()) {
+  <div class="loading">
+    <mat-spinner diameter="48" />
+  </div>
+} @else {
+  <div class="blog-grid">
+    @for (blog of blogs(); track blog.id) {
+      <app-blog-card [blog]="blog" (likeToggled)="onLikeToggled($event)" />
+    } @empty {
+      <p>Keine Blog-Posts vorhanden.</p>
+    }
+  </div>
+}

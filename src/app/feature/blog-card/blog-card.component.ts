@@ -1,4 +1,4 @@
-import { Blog } from '../../interfaces/blog';
+import { Blog } from '../../interfaces/blog.schema';
 import { Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
