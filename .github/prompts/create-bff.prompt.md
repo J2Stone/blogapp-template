@@ -55,7 +55,7 @@ BFF (Azure Functions v4)
     |-- Login          (PKCE pair + state --> sealed __pkce cookie --> redirect)
     |-- Callback       (verify state, exchange code, seal session, redirect back)
     |-- Session        (@hapi/iron sealed cookies, split across chunks)
-    |-- CSRF           (X-Requested-With header, on fetch endpoints only)
+    |-- CSRF           (X-Requested-With header + Origin check, fetch endpoints only)
     |-- CORS           (preflight + response headers)
     |-- Token refresh  (transparent, inside /auth/me and the proxy)
     |-- Logout         (revoke + return Keycloak end-session URL)
@@ -129,10 +129,11 @@ bff/
       session.ts          # Iron seal/unseal, chunked cookies, PKCE cookie
       keycloak.ts         # PKCE, authorize/logout URLs, code exchange, refresh, revoke
       cors.ts             # CORS preflight + response headers
-      csrf.ts             # X-Requested-With header check
+      csrf.ts             # X-Requested-With header + server-side Origin check
       proxy.ts            # Backend proxy with auto-refresh
       keycloak.spec.ts    # node:test — safeReturnUrl, PKCE, URL building
       session.spec.ts     # node:test — cookie chunking round trip
+      csrf.spec.ts        # node:test — header check, Origin check
     functions/
       auth-login.ts       # GET  /api/auth/login    (302 to Keycloak)
       auth-callback.ts    # GET  /api/auth/callback (code -> session)
@@ -157,7 +158,7 @@ Read #file:.github/prompts/create-bff/lib-implementations.md — it contains the
 
 3. **cors.ts** — Every response includes `Access-Control-Allow-Origin` and `Access-Control-Allow-Credentials: true`. Preflight returns 204. Note that with the same-origin setup of Step 6 this is mostly inert, but keep it: it costs nothing and covers split-origin deployments.
 
-4. **csrf.ts** — Validates `X-Requested-With: XMLHttpRequest`. Applies to fetch-reachable state-changing endpoints only — a browser navigation structurally cannot carry the header.
+4. **csrf.ts** — Validates `X-Requested-With: XMLHttpRequest` and, independently, compares `Origin` against `ALLOWED_ORIGIN` server-side. Applies to fetch-reachable state-changing endpoints only — a browser navigation structurally cannot carry the header. The `Origin` check is what still holds when `SameSite=Lax` does not: its boundary is the _site_, so a sibling subdomain would otherwise get the cookie attached.
 
 5. **proxy.ts** — Extracts and unseals the session, **rejects non-GET requests without a session with 401**, auto-refreshes if expired, attaches the bearer token, forwards to the backend.
 
@@ -431,8 +432,9 @@ The BFF has no test framework by default and does not need one — `node:test` p
 - `createPkcePair` produces a verifier whose SHA-256 is the challenge, and a fresh pair each call
 - Cookie chunking round-trips a value over 4 KB, and a shorter session expires the previous session's surplus chunks
 - A trailing slash on `ALLOWED_ORIGIN` never reaches the redirect URI
+- `checkCsrf` rejects a foreign `Origin` **and** a sibling subdomain, and lets a request without any `Origin` through
 
-Because `keycloak.ts` validates its environment at import time, its spec must set `process.env` before a dynamic `await import()`. That is also the cheapest way to test the trailing-slash trim.
+Because `keycloak.ts` and `csrf.ts` validate their environment at import time, their specs must set `process.env` before a dynamic `await import()`. That is also the cheapest way to test the trailing-slash trim.
 
 ## Adding new proxy endpoints
 

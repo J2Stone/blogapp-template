@@ -347,28 +347,58 @@ export function handlePreflight(request: HttpRequest): HttpResponseInit | null {
 }
 ```
 
+> Never reflect the request's `Origin` back into `Access-Control-Allow-Origin` either. It looks like it works — every origin gets a matching header — which is exactly the problem: the browser then allows credentialed requests from anywhere, and the check silently stops being a check.
+
 > Never set `Access-Control-Allow-Origin: *` here. Combined with `Allow-Credentials: true` it is invalid per spec and browsers reject it — and since `ALLOWED_ORIGIN` also builds the redirect URIs, `*` would break login outright.
 
 ## csrf.ts — CSRF protection
 
-A lightweight check using the `X-Requested-With: XMLHttpRequest` custom header. It works because browsers will not send custom headers cross-origin without a preflight, the preflight is only answered for `ALLOWED_ORIGIN`, and form submissions cannot set custom headers.
+Two independent checks. The `X-Requested-With: XMLHttpRequest` header works because browsers will not send custom headers cross-origin without a preflight, the preflight is only answered for `ALLOWED_ORIGIN`, and form submissions cannot set custom headers. The `Origin` comparison is the server-side counterpart: it holds even if the browser does not enforce CORS, and it fails closed should the CORS headers ever be loosened to reflect the request origin.
 
 Apply it to **fetch-reachable** state-changing endpoints: `auth/logout` and the proxies. `auth/login` and `auth/callback` are browser navigations and structurally cannot carry the header — login mutates nothing, and the callback is protected by the `state` comparison instead.
 
 ```typescript
 import { HttpRequest, HttpResponseInit } from '@azure/functions';
 
+// Same value the CORS headers use. A trailing slash would never match the
+// browser's `Origin`, which is always sent bare.
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN!.replace(/\/+$/, '');
+
+function reject(reason: string): HttpResponseInit {
+  return { status: 403, jsonBody: { error: reason } };
+}
+
+/**
+ * Two independent checks against cross-site requests:
+ *
+ * 1. `X-Requested-With` cannot be set by a form post or an image tag, and a
+ *    cross-origin `fetch` that sets it triggers a preflight our CORS handler
+ *    only answers for the allowed origin.
+ * 2. `Origin` is compared server-side. This does not depend on the browser
+ *    enforcing CORS, and it fails closed if the CORS headers are ever loosened
+ *    to reflect the request origin. It also closes the gap left by
+ *    `SameSite=Lax`, whose boundary is the *site* — a sibling subdomain counts
+ *    as same-site and would still get the cookie attached.
+ *
+ * Requests without an `Origin` header (curl, Postman) pass check 2: they carry
+ * no ambient cookies, so they are not the CSRF case. Browsers always send
+ * `Origin` on POST.
+ */
 export function checkCsrf(request: HttpRequest): HttpResponseInit | null {
-  const xRequestedWith = request.headers.get('x-requested-with');
-  if (xRequestedWith !== 'XMLHttpRequest') {
-    return {
-      status: 403,
-      jsonBody: { error: 'Missing or invalid X-Requested-With header' },
-    };
+  if (request.headers.get('x-requested-with') !== 'XMLHttpRequest') {
+    return reject('Missing or invalid X-Requested-With header');
   }
+
+  const origin = request.headers.get('origin');
+  if (origin !== null && origin !== ALLOWED_ORIGIN) {
+    return reject('Origin not allowed');
+  }
+
   return null;
 }
 ```
+
+> The `Origin` check is defence in depth, not the primary barrier — the header check plus a **fixed** `Access-Control-Allow-Origin` already stops classic CSRF in current browsers. Its value is that it does not rely on either of those two things staying correct.
 
 ## proxy.ts — Backend proxy with auto-refresh
 
@@ -592,5 +622,44 @@ test('clearing expires every chunk the browser sent', () => {
   for (const c of cleared) {
     assert.equal(c.maxAge, 0);
   }
+});
+```
+
+`csrf.spec.ts` reads its environment at import time as well, so the same dynamic-import trick applies. The sibling-subdomain case is the one worth writing down — it is the one `SameSite=Lax` alone does not cover:
+
+```typescript
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import type { HttpRequest } from '@azure/functions';
+
+process.env.ALLOWED_ORIGIN ??= 'https://my-app.net';
+
+const { checkCsrf } = await import('./csrf.js');
+
+/** Just enough of an `HttpRequest` for `checkCsrf`. */
+function request(headers: Record<string, string>): HttpRequest {
+  return { headers: new Headers(headers) } as unknown as HttpRequest;
+}
+
+const XHR = { 'X-Requested-With': 'XMLHttpRequest' };
+
+test('a request from the app passes', () => {
+  assert.equal(checkCsrf(request({ ...XHR, Origin: 'https://my-app.net' })), null);
+});
+
+test('a form post from another site has no X-Requested-With', () => {
+  const result = checkCsrf(request({ Origin: 'https://evil.example' }));
+  assert.equal(result?.status, 403);
+});
+
+test('a sibling subdomain is same-site for the cookie but not an allowed origin', () => {
+  // SameSite=Lax would still attach the session cookie here — the Origin check
+  // is what stops the request.
+  const result = checkCsrf(request({ ...XHR, Origin: 'https://evil.my-app.net' }));
+  assert.equal(result?.status, 403);
+});
+
+test('a client without an Origin header is not the CSRF case', () => {
+  assert.equal(checkCsrf(request(XHR)), null);
 });
 ```
