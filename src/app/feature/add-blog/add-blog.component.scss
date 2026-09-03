@@ -1,0 +1,18 @@
+@use 'variables' as *;
+
+.add-blog-card {
+  max-width: $detail-max;
+  margin: $spacing-xl auto;
+}
+
+.add-blog-field {
+  width: 100%;
+}
+
+.add-blog-error {
+  margin: 0 0 $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
