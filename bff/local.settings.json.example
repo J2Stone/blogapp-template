@@ -1,0 +1,16 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "KEYCLOAK_URL": "https://REPLACE-ME.example/realms/REPLACE-ME",
+    "KEYCLOAK_CLIENT_ID": "student-bff",
+    "KEYCLOAK_CLIENT_SECRET": "REPLACE-ME-client-secret-vom-dozenten",
+    "SESSION_SECRET": "REPLACE-ME-mit-openssl-rand-base64-32",
+    "BACKEND_API_URL": "https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io",
+    "ALLOWED_ORIGIN": "http://localhost:4200"
+  },
+  "Host": {
+    "CORS": "*"
+  }
+}

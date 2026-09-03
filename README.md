@@ -74,6 +74,19 @@ Add these repository secrets (Settings → Secrets and variables → Actions):
 - `STORAGE_ACCOUNT_NAME` — the storage account name
 - `STORAGE_ACCOUNT_KEY` — an access key (Storage account → _Access keys_)
 
+## Authentication (BFF-Pattern)
+
+Login und Logout laufen über einen Backend-for-Frontend in `bff/` (Azure Functions, Keycloak,
+Authorization Code Flow + PKCE). Der Browser hält nie ein Token, nur ein HTTP-Only-Cookie.
+
+```bash
+cd bff && npm install                              # einmalig
+cp bff/local.settings.json.example bff/local.settings.json   # Keycloak-Werte eintragen
+npm start                                          # Frontend (4200) + BFF (7071) zusammen
+```
+
+Details, Endpoints, Keycloak-Client-Einstellungen und Troubleshooting: [docs/bff-auth.md](docs/bff-auth.md).
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:

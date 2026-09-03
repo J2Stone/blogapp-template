@@ -1,0 +1,30 @@
+<mat-card appearance="outlined" class="login-card">
+  <mat-card-header>
+    <mat-card-title>Anmelden</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (errorMessage(); as message) {
+      <p class="login-error" data-testid="login-error">{{ message }}</p>
+    }
+
+    @if (authEnabled) {
+      <p>Die Anmeldung läuft über Keycloak. Du wirst dorthin weitergeleitet.</p>
+    } @else {
+      <p>Für diese Umgebung ist keine Anmeldung verfügbar.</p>
+    }
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button
+      mat-flat-button
+      type="button"
+      data-testid="login-submit"
+      [disabled]="!authEnabled"
+      (click)="signIn()"
+    >
+      <mat-icon>login</mat-icon>
+      Mit Keycloak anmelden
+    </button>
+  </mat-card-actions>
+</mat-card>

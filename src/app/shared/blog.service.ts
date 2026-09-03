@@ -1,13 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Blog, BlogDetail, blogListResponseSchema } from '../interfaces/blog.schema';
+import { Blog, BlogDetail, NewBlog, blogListResponseSchema } from '../interfaces/blog.schema';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
   private http = inject(HttpClient);
-  private readonly url =
-    'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io/entries';
+  // In der Entwicklung ist apiUrl der BFF-Proxy, der den Bearer Token serverseitig
+  // anhaengt; in Production zeigt er direkt aufs Backend (dort gibt es keinen BFF).
+  private readonly url = `${environment.apiUrl}/entries`;
 
   async getBlogs(): Promise<Blog[]> {
     const response = await firstValueFrom(this.http.get(this.url));
@@ -30,7 +32,7 @@ export class BlogService {
     }
   }
 
-  async createBlog(blog: Blog): Promise<Blog | null> {
+  async createBlog(blog: NewBlog): Promise<Blog | null> {
     try {
       return await firstValueFrom(this.http.post<Blog>(this.url, blog));
     } catch (error) {
