@@ -40,4 +40,7 @@ export const blogListResponseSchema = z.object({
 
 export type Blog = z.infer<typeof blogSchema>;
 export type BlogDetail = z.infer<typeof blogDetailSchema>;
+
+/** Was beim Anlegen geschickt wird: alles Weitere vergibt das Backend. */
+export type NewBlog = Pick<BlogDetail, 'title' | 'content'>;
 export type BlogComment = z.infer<typeof blogCommentSchema>;

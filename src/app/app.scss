@@ -21,4 +21,9 @@ mat-toolbar {
   .spacer {
     flex: 1 1 auto;
   }
+
+  .user-name {
+    font: var(--mat-sys-label-large);
+    opacity: 0.85;
+  }
 }
