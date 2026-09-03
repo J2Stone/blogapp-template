@@ -86,7 +86,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fallow analysis
-        uses: fallow-rs/fallow@v2.89.0
+        uses: fallow-rs/fallow@v3
         with:
           format: sarif
           # Report findings (surfaced in Code Scanning) without failing CI.
