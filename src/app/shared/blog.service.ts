@@ -10,20 +10,15 @@ export class BlogService {
     'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io/entries';
 
   async getBlogs(): Promise<Blog[]> {
-    try {
-      const response = await firstValueFrom(this.http.get(this.url));
-      const result = blogListResponseSchema.safeParse(response);
+    const response = await firstValueFrom(this.http.get(this.url));
+    const result = blogListResponseSchema.safeParse(response);
 
-      if (!result.success) {
-        console.error('Unerwartete API-Antwort:', result.error.issues);
-        return [];
-      }
-
-      return result.data.data;
-    } catch (error) {
-      console.error('Blogs konnten nicht geladen werden:', error);
-      return [];
+    if (!result.success) {
+      console.error('Unerwartete API-Antwort:', result.error.issues);
+      throw new Error('Unerwartete API-Antwort');
     }
+
+    return result.data.data;
   }
 
   async getById(id: number): Promise<BlogDetail | undefined> {

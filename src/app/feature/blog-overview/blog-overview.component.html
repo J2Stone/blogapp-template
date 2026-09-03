@@ -1,11 +1,39 @@
-@if (loading()) {
+<header class="blog-toolbar">
+  <p class="blog-count">
+    {{ state.blogCount() }} Blog-Beiträge
+    @if (state.selectedAuthor() !== allAuthors) {
+      <span class="blog-count__filtered">({{ state.filteredBlogs().length }} gefiltert)</span>
+    }
+  </p>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Autor</mat-label>
+    <mat-select
+      [value]="state.selectedAuthor()"
+      (selectionChange)="state.setAuthor($event.value)"
+      [disabled]="state.loading()"
+    >
+      <mat-option [value]="allAuthors">Alle Autoren</mat-option>
+      @for (author of state.authors(); track author) {
+        <mat-option [value]="author">{{ author }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</header>
+
+@if (state.loading()) {
   <div class="loading">
     <mat-spinner diameter="48" />
   </div>
+} @else if (state.error()) {
+  <div class="error" role="alert">
+    <p>{{ state.error() }}</p>
+    <button matButton="filled" (click)="state.loadBlogs()">Erneut versuchen</button>
+  </div>
 } @else {
   <div class="blog-grid">
-    @for (blog of blogs(); track blog.id) {
-      <app-blog-card [blog]="blog" (likeToggled)="onLikeToggled($event)" />
+    @for (blog of state.filteredBlogs(); track blog.id) {
+      <app-blog-card [blog]="blog" (likeToggled)="state.toggleLike($event)" />
     } @empty {
       <p>Keine Blog-Posts vorhanden.</p>
     }
