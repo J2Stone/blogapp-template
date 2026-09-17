@@ -1,0 +1,10 @@
+@use 'variables' as *;
+
+.blog-create-card {
+  max-width: $detail-max;
+  margin: $spacing-xl auto;
+}
+
+.blog-create-field {
+  width: 100%;
+}

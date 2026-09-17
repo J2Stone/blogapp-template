@@ -1,0 +1,62 @@
+<mat-card appearance="outlined" class="blog-create-card">
+  <mat-card-header>
+    <mat-card-title>Neuer Blog-Beitrag</mat-card-title>
+  </mat-card-header>
+
+  <form (submit)="onSubmit($event)">
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="blog-create-field">
+        <mat-label>Titel</mat-label>
+        <input matInput data-testid="blog-create-title" [formField]="blogForm.title" />
+
+        @if (blogForm.title().touched() && blogForm.title().invalid()) {
+          @for (error of blogForm.title().errors(); track error.kind) {
+            <mat-error>{{ error.message }}</mat-error>
+          }
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="blog-create-field">
+        <mat-label>Inhalt</mat-label>
+        <textarea
+          matInput
+          rows="8"
+          data-testid="blog-create-content"
+          [formField]="blogForm.content"
+        ></textarea>
+
+        @if (blogForm.content().touched() && blogForm.content().invalid()) {
+          @for (error of blogForm.content().errors(); track error.kind) {
+            <mat-error>{{ error.message }}</mat-error>
+          }
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="blog-create-field">
+        <mat-label>Kategorie</mat-label>
+        <mat-select data-testid="blog-create-category" [formField]="blogForm.category">
+          <mat-option value="general">Allgemein</mat-option>
+          <mat-option value="tech">Technik</mat-option>
+          <mat-option value="lifestyle">Lifestyle</mat-option>
+        </mat-select>
+
+        @if (blogForm.category().touched() && blogForm.category().invalid()) {
+          @for (error of blogForm.category().errors(); track error.kind) {
+            <mat-error>{{ error.message }}</mat-error>
+          }
+        }
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button
+        mat-flat-button
+        type="submit"
+        data-testid="blog-create-submit"
+        [disabled]="blogForm().invalid()"
+      >
+        Veröffentlichen
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>
