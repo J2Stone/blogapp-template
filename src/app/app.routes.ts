@@ -1,15 +1,17 @@
 import { Routes } from '@angular/router';
-import { BlogOverviewComponent } from './feature/blog-overview/blog-overview.component';
-import { blogResolver } from './shared/blog.resolver';
 import { authGuard } from './shared/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: BlogOverviewComponent },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./feature/blog-overview/blog-overview.component').then(
+        (m) => m.BlogOverviewComponent,
+      ),
+  },
   {
     path: 'blog/:id',
-    loadComponent: () =>
-      import('./feature/blog-detail/blog-detail.component').then((m) => m.BlogDetailComponent),
-    resolve: { blog: blogResolver },
+    loadChildren: () => import('./feature/blog-detail/blog-detail.routes').then((m) => m.routes),
   },
   {
     // canMatch statt canActivate: ohne Anmeldung wird der Lazy-Chunk gar nicht geladen.
@@ -17,6 +19,11 @@ export const routes: Routes = [
     canMatch: [authGuard],
     loadComponent: () =>
       import('./feature/add-blog/add-blog.component').then((m) => m.AddBlogComponent),
+  },
+  {
+    path: 'blog-create',
+    loadComponent: () =>
+      import('./feature/blog-create/blog-create.component').then((m) => m.BlogCreateComponent),
   },
   {
     path: 'login',
