@@ -6,9 +6,13 @@ name: Deploy to Azure Storage
 permissions:
   contents: read
 
+# Kein automatischer Deploy bei Push: fuer das Static-Website-Hosting auf Azure
+# liegt derzeit keine gueltige Lizenz vor, jeder Lauf scheitert daher an fehlenden
+# Storage-Credentials. Der Workflow bleibt per Hand ausloesbar (workflow_dispatch)
+# und der push-Trigger kann wieder aktiviert werden, sobald ein Account da ist.
 on:
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
   workflow_dispatch: {}
 
 env:
