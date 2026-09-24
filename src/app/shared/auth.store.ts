@@ -39,6 +39,7 @@ export class AuthStore {
   readonly isAuthenticated = computed(() => this.#state().isAuthenticated);
   readonly user = computed(() => this.#state().user);
   readonly loading = computed(() => this.#state().loading);
+  // fallow-ignore-next-line unused-class-member -- genutzt von auth.guard.ts (via inject()), Fallow erkennt das nicht.
   readonly roles = computed(() => this.#state().user?.roles ?? []);
 
   /**

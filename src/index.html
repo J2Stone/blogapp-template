@@ -2,6 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- CSP als Meta-Tag: die Azure-Storage-Static-Website kann keine Response-Header setzen.
+         'unsafe-inline' bei style-src, weil Angular/Material Komponenten-Styles als <style> einfuegen.
+         Google Fonts, Unsplash-Bilder und das Backend (Prod) sind die einzigen Fremdquellen. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://images.unsplash.com; connect-src 'self' https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io; base-uri 'self'; form-action 'self'"
+    />
     <title>Zumstei's Blog</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -1,6 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Blog, BlogDetail, NewBlog, blogListResponseSchema } from '../interfaces/blog.schema';
+import {
+  Blog,
+  BlogDetail,
+  NewBlog,
+  blogDetailSchema,
+  blogListResponseSchema,
+} from '../interfaces/blog.schema';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -25,7 +31,8 @@ export class BlogService {
 
   async getById(id: number): Promise<BlogDetail | undefined> {
     try {
-      return await firstValueFrom(this.http.get<BlogDetail>(`${this.url}/${id}`));
+      // Ungueltige Antwort wie "nicht gefunden" behandeln: parse() wirft, catch unten faengt.
+      return blogDetailSchema.parse(await firstValueFrom(this.http.get(`${this.url}/${id}`)));
     } catch (error) {
       console.error(`Blog ${id} konnte nicht geladen werden:`, error);
       return undefined;

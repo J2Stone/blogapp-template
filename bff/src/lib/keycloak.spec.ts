@@ -16,6 +16,9 @@ test('safeReturnUrl lehnt alles ab, was die Seite verlassen koennte', () => {
     'https://phishing.example/login',
     '//phishing.example/login',
     '/\\phishing.example',
+    '/\t/phishing.example',
+    '/\n/phishing.example',
+    '/\t/[',
     '',
     null,
     undefined,
@@ -23,6 +26,7 @@ test('safeReturnUrl lehnt alles ab, was die Seite verlassen koennte', () => {
     assert.equal(safeReturnUrl(hostile), '/', `should reject ${hostile}`);
   }
   assert.equal(safeReturnUrl('/add-blog'), '/add-blog');
+  assert.equal(safeReturnUrl('/blog/1?x=1#c'), '/blog/1?x=1#c');
 });
 
 test('createPkcePair leitet die S256-Challenge aus dem Verifier ab', async () => {

@@ -15,3 +15,16 @@ if (typeof globalThis.IntersectionObserver === 'undefined') {
     }
   } as unknown as typeof globalThis.IntersectionObserver;
 }
+
+// Polyfill matchMedia for jsdom (used by the sidebar's isMobile signal); defaults to desktop.
+if (typeof window.matchMedia === 'undefined') {
+  window.matchMedia = (query: string) =>
+    ({
+      matches: false,
+      media: query,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      addEventListener() {},
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      removeEventListener() {},
+    }) as unknown as MediaQueryList;
+}
