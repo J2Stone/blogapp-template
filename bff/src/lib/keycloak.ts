@@ -53,10 +53,17 @@ export function randomState(): string {
 
 /** Nur seiteninterne Pfade sind gueltige Ziele nach dem Login, alles andere ist ein Open Redirect. */
 export function safeReturnUrl(url: string | null | undefined): string {
-  if (!url?.startsWith('/') || url.startsWith('//') || url.startsWith('/\\')) {
-    return '/';
+  // Parsen wie der Browser (entfernt Tabs/Zeilenumbrueche, '\' zaehlt als '/'): reine
+  // Praefix-Checks lassen z.B. '/\t/evil.example' durch, das der Browser als '//evil.example' liest.
+  try {
+    const parsed = new URL(url ?? '/', 'http://same.origin');
+    if (parsed.origin === 'http://same.origin') {
+      return parsed.pathname + parsed.search + parsed.hash;
+    }
+  } catch {
+    // Unparsbar -> Fallback unten.
   }
-  return url;
+  return '/';
 }
 
 export function buildAuthorizeUrl(state: string, codeChallenge: string): string {

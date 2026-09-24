@@ -1,0 +1,65 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport role="dialog" mode="over">
+    <mat-toolbar>Menu</mat-toolbar>
+    @if (isMobile()) {
+      <ng-container *ngTemplateOutlet="nav" />
+    }
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      @if (isMobile()) {
+        <button type="button" aria-label="Toggle sidenav" matIconButton (click)="drawer.toggle()">
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+      }
+      <span>{{ title }}</span>
+      @if (!isMobile()) {
+        <ng-container *ngTemplateOutlet="nav" />
+      }
+      <span class="spacer"></span>
+
+      <!-- Solange der Session-Check laeuft, weder Login noch Logout zeigen: sonst blitzt
+           nach jedem Reload kurz „Login" auf, bevor der User da ist. -->
+      @if (authEnabled && !authStore.loading()) {
+        @if (authStore.isAuthenticated()) {
+          <span class="user-name" data-testid="user-name">
+            {{ authStore.user()?.preferred_username }}
+          </span>
+          <button mat-button type="button" data-testid="logout" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            Logout
+          </button>
+        } @else {
+          <a mat-button routerLink="/login" data-testid="login">
+            <mat-icon>login</mat-icon>
+            Login
+          </a>
+        }
+      }
+
+      <button mat-icon-button (click)="toggleTheme()">
+        <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<!-- Ein Nav-Markup fuer beide Orte: Mobile im Drawer (vertikal), Desktop in der Toolbar (horizontal). -->
+<ng-template #nav>
+  <!-- Auf Mobile nach dem Klick schliessen, sonst verdeckt das Overlay die neue Seite. -->
+  <nav class="nav">
+    <a
+      (click)="drawer.close()"
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Blog</a
+    >
+    <a (click)="drawer.close()" routerLink="/about" routerLinkActive="active">About</a>
+    @if (authEnabled && authStore.isAuthenticated()) {
+      <a (click)="drawer.close()" routerLink="/add-blog" routerLinkActive="active">Neuer Beitrag</a>
+    }
+  </nav>
+</ng-template>

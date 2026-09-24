@@ -22,13 +22,27 @@
   font: var(--mat-sys-body-medium);
 }
 
+// Mobile First: ohne Media Query 1 Spalte; flex-wrap laesst Karten in die naechste Zeile rutschen.
 .blog-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax($card-min, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: $spacing-lg;
   padding: $spacing-lg;
   max-width: $grid-max;
   margin: 0 auto;
+
+  app-blog-card {
+    flex: 0 0 100%;
+
+    // Breite = (100% - Luecken) / Spalten, damit gap nicht zum Umbruch fuehrt.
+    @media (min-width: 768px) {
+      flex-basis: calc((100% - #{$spacing-lg}) / 2);
+    }
+
+    @media (min-width: 1024px) {
+      flex-basis: calc((100% - 2 * #{$spacing-lg}) / 3);
+    }
+  }
 }
 
 .loading,
