@@ -12,7 +12,7 @@ import { corsHeaders, handlePreflight } from '../lib/cors.js';
  * Ohne diesen Keycloak-Aufruf ueberlebt die SSO-Session: der User loggt sich aus, klickt
  * Login und ist ohne Passwort wieder drin. Genau dafuer liegt das ID-Token in der Session.
  */
-async function authLogout(request: HttpRequest): Promise<HttpResponseInit> {
+export async function authLogout(request: HttpRequest): Promise<HttpResponseInit> {
   const preflight = handlePreflight(request);
   if (preflight) return preflight;
 

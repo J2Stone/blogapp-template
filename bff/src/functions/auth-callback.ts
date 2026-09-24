@@ -25,7 +25,7 @@ function backToLogin(reason: LoginError): HttpResponseInit {
   };
 }
 
-async function authCallback(
+export async function authCallback(
   request: HttpRequest,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {

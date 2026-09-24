@@ -12,7 +12,7 @@ const blogBaseSchema = z.object({
   updatedAt: z.string(),
 });
 
-export const blogCommentSchema = z.object({
+const blogCommentSchema = z.object({
   id: z.number(),
   author: z.string(),
   content: z.string(),
@@ -20,7 +20,7 @@ export const blogCommentSchema = z.object({
   updatedAt: z.string(),
 });
 
-export const blogSchema = blogBaseSchema.extend({
+const blogSchema = blogBaseSchema.extend({
   contentPreview: z.string(),
   comments: z.number(),
 });
@@ -43,4 +43,3 @@ export type BlogDetail = z.infer<typeof blogDetailSchema>;
 
 /** Was beim Anlegen geschickt wird: alles Weitere vergibt das Backend. */
 export type NewBlog = Pick<BlogDetail, 'title' | 'content'>;
-export type BlogComment = z.infer<typeof blogCommentSchema>;

@@ -28,7 +28,7 @@ function userFromToken(accessToken: string) {
   };
 }
 
-async function authMe(request: HttpRequest): Promise<HttpResponseInit> {
+export async function authMe(request: HttpRequest): Promise<HttpResponseInit> {
   const preflight = handlePreflight(request);
   if (preflight) return preflight;
 
