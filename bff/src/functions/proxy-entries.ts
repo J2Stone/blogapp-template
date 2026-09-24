@@ -8,7 +8,7 @@ import { corsHeaders, handlePreflight } from '../lib/cors.js';
  * duerfen sich in Azure Functions keine Route teilen, auch nicht mit verschiedenen
  * Methoden – deshalb liegen beide Methoden in einer Datei.
  */
-async function proxyEntries(request: HttpRequest): Promise<HttpResponseInit> {
+export async function proxyEntries(request: HttpRequest): Promise<HttpResponseInit> {
   const preflight = handlePreflight(request);
   if (preflight) return preflight;
 

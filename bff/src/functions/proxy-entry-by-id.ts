@@ -4,7 +4,7 @@ import { checkCsrf } from '../lib/csrf.js';
 import { corsHeaders, handlePreflight } from '../lib/cors.js';
 
 /** `{id:int}` in der Route sorgt dafuer, dass nur numerische IDs ueberhaupt matchen. */
-async function proxyEntryById(request: HttpRequest): Promise<HttpResponseInit> {
+export async function proxyEntryById(request: HttpRequest): Promise<HttpResponseInit> {
   const preflight = handlePreflight(request);
   if (preflight) return preflight;
 
