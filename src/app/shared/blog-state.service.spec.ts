@@ -82,6 +82,59 @@ describe('BlogStateService', () => {
     expect(localStorage.getItem('blog-selected-author')).toBe('Linus');
   });
 
+  it('is loading while the request runs and stops afterwards', async () => {
+    const pending = service.loadBlogs();
+    expect(service.loading()).toBe(true);
+
+    await pending;
+    expect(service.loading()).toBe(false);
+  });
+
+  it('recomputes blogCount when the source changes', async () => {
+    await service.loadBlogs();
+    expect(service.blogCount()).toBe(3);
+
+    getBlogs.mockResolvedValue([]);
+    await service.loadBlogs();
+    expect(service.blogCount()).toBe(0);
+  });
+
+  it('calls localStorage.setItem from the effect', () => {
+    const setItem = vi.spyOn(Storage.prototype, 'setItem');
+
+    service.setAuthor('Ada');
+    TestBed.tick();
+
+    expect(setItem).toHaveBeenCalledWith('blog-selected-author', 'Ada');
+    setItem.mockRestore();
+  });
+
+  it('handles an empty list from the backend', async () => {
+    getBlogs.mockResolvedValue([]);
+    await service.loadBlogs();
+
+    expect(service.blogCount()).toBe(0);
+    expect(service.authors()).toEqual([]);
+    expect(service.filteredBlogs()).toEqual([]);
+  });
+
+  it('keeps an empty list when the backend returns null (BlogService rejects it)', async () => {
+    // BlogService validiert die Antwort per zod und wirft bei null/undefined.
+    getBlogs.mockRejectedValue(new Error('Unerwartete API-Antwort'));
+    await service.loadBlogs();
+
+    expect(service.blogs()).toEqual([]);
+    expect(service.blogCount()).toBe(0);
+    expect(service.error()).not.toBeNull();
+  });
+
+  it('returns no blogs for an unknown author', async () => {
+    await service.loadBlogs();
+    service.setAuthor('Unbekannt');
+
+    expect(service.filteredBlogs()).toEqual([]);
+  });
+
   it('toggles the like state of a single blog', async () => {
     await service.loadBlogs();
     service.toggleLike(1);
