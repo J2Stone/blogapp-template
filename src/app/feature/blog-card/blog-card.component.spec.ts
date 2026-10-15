@@ -35,4 +35,18 @@ describe('BlogCardComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display the blog title', () => {
+    const title = fixture.nativeElement.querySelector('mat-card-title');
+    expect(title.textContent).toContain('Test');
+  });
+
+  it('should emit the blog id when the like button is clicked', () => {
+    const emitted: number[] = [];
+    component.likeToggled.subscribe((id) => emitted.push(id));
+
+    fixture.nativeElement.querySelector('button').click();
+
+    expect(emitted).toEqual([1]);
+  });
 });

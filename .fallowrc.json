@@ -1,0 +1,6 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  // Peer-Dependency von @angular/material (verlangt exakt dieselbe Version) – wird
+  // nicht direkt importiert, muss aber in package.json stehen.
+  "ignoreDependencies": ["@angular/cdk"]
+}
